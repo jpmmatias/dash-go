@@ -15,10 +15,16 @@ import {
 } from '@chakra-ui/react';
 import { RiAddLine, RiPencilLine, RiPercentLine } from 'react-icons/ri';
 import { Header, Sidebar, Pagination } from '../../components';
+import { useBreakpointValue } from '@chakra-ui/react';
+import Link from 'next/link';
 
 type Props = {};
 
 const UserList = (props: Props) => {
+	const isWideVersion = useBreakpointValue({
+		base: false,
+		lg: true,
+	});
 	return (
 		<Box>
 			<Header />
@@ -29,34 +35,37 @@ const UserList = (props: Props) => {
 						<Heading size='lg' fontWeight='normal'>
 							Usuários
 						</Heading>
-						<Button
-							role='button'
-							size='sm'
-							fontSize='sm'
-							colorScheme='pink'
-							leftIcon={<Icon as={RiAddLine} fontSize='20' />}
-							as='a'>
-							Criar usuário
-						</Button>
+						<Link passHref href='/users/create'>
+							<Button
+								size='sm'
+								fontSize='sm'
+								colorScheme='pink'
+								leftIcon={<Icon as={RiAddLine} fontSize='20' />}
+								as='a'>
+								Criar usuário
+							</Button>
+						</Link>
 					</Flex>
 					<Table colorScheme='whiteAlpha'>
 						<Thead>
 							<Tr>
-								<Th px='6' color='gray.300' width='8'>
+								<Th px={['4', '4', '6']} color='gray.300' width='8'>
 									<Checkbox colorScheme='pink'></Checkbox>
 								</Th>
 								<Th px='6' color='gray.300' width='8'>
 									Usuário
 								</Th>
-								<Th px='6' color='gray.300' width='8'>
-									Data de cadastro
-								</Th>
+								{isWideVersion && (
+									<Th px={['4', '4', '6']} color='gray.300' width='8'>
+										Data de cadastro
+									</Th>
+								)}
 								<Th width='8'></Th>
 							</Tr>
 						</Thead>
 						<Tbody>
 							<Tr>
-								<Td px='6'>
+								<Td px={['4', '4', '6']}>
 									<Checkbox colorScheme='pink' />
 								</Td>
 								<Td>
@@ -67,17 +76,28 @@ const UserList = (props: Props) => {
 										</Text>
 									</Box>
 								</Td>
-								<Td>04 de Abril de 2022</Td>
-								<Td pl='14%'>
-									<Button
-										role='button'
-										size='sm'
-										fontSize='sm'
-										colorScheme='purple'
-										leftIcon={<Icon as={RiPencilLine} fontSize='20' />}
-										as='a'>
-										Editar
-									</Button>
+								{isWideVersion && <Td>04 de Abril de 2022</Td>}
+								<Td pl={{ base: '', lg: '13%' }}>
+									{isWideVersion ? (
+										<Button
+											role='button'
+											size='sm'
+											fontSize='sm'
+											colorScheme='purple'
+											leftIcon={<Icon as={RiPencilLine} fontSize='20' />}
+											as='a'>
+											Editar
+										</Button>
+									) : (
+										<Button
+											role='button'
+											size='sm'
+											fontSize='sm'
+											colorScheme='purple'
+											as='a'>
+											<Icon as={RiPencilLine} fontSize='20' />
+										</Button>
+									)}
 								</Td>
 							</Tr>
 						</Tbody>

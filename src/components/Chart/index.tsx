@@ -12,7 +12,7 @@ type Props = {
 
 const Chart = ({ title }: Props) => {
 	return (
-		<Box bg='gray.800' borderRadius={8} p={8}>
+		<Box bg='gray.800' borderRadius={8} p={['6', '8']}>
 			<Text fontSize='lg' mb='4'>
 				{title}
 			</Text>

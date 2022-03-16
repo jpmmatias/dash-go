@@ -5,7 +5,11 @@ type Props = {};
 
 function Pagination({}: Props) {
 	return (
-		<Stack direction='row' mt='8' justify='space-between' align='center'>
+		<Stack
+			direction={['column', 'column', 'row']}
+			mt='8'
+			justify='space-between'
+			align='center'>
 			<Box>
 				<strong>0</strong>- <strong>10</strong> de <strong>100</strong>
 			</Box>
