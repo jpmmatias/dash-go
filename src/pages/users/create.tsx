@@ -13,6 +13,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Header, Input, Sidebar } from '../../components';
 import { CreateUserFormSchema } from '../../utils/validations';
+import { useMutation, useQueryClient } from 'react-query';
+import { api } from '../../services/axios';
+import { useRouter } from 'next/router';
 
 interface CreateUserFormData {
 	name: string;
@@ -24,6 +27,26 @@ interface CreateUserFormData {
 type Props = {};
 
 function CreateUser({}: Props) {
+	const queryClient = useQueryClient();
+	const router = useRouter();
+	const createUser = useMutation(
+		async (user: CreateUserFormData) => {
+			const response = await api.post('users', {
+				user: {
+					...user,
+					created_at: new Date(),
+				},
+			});
+
+			return response.data.user;
+		},
+		{
+			onSuccess: () => {
+				queryClient.invalidateQueries('users');
+			},
+		}
+	);
+
 	const { register, handleSubmit, formState } = useForm({
 		resolver: yupResolver(CreateUserFormSchema),
 		reValidateMode: 'onSubmit',
@@ -35,8 +58,8 @@ function CreateUser({}: Props) {
 		values,
 		event
 	) => {
-		await new Promise((resolve) => setTimeout(resolve, 2000));
-		console.log('a');
+		await createUser.mutateAsync(values);
+		router.push('/users');
 	};
 
 	return (

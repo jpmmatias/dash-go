@@ -21,9 +21,9 @@ import Link from 'next/link';
 import { useUsers } from '../../services/hooks/useUsers';
 import { useState } from 'react';
 
-type Props = {};
+interface Props {}
 
-const UserList = (props: Props) => {
+const UserList = ({}: Props) => {
 	const [page, setPage] = useState(1);
 	const { error, isFetching, isLoading, data } = useUsers(page);
 	const isWideVersion = useBreakpointValue({
