@@ -18,40 +18,12 @@ import { RiAddLine, RiPencilLine } from 'react-icons/ri';
 import { Header, Sidebar, Pagination } from '../../components';
 import { useBreakpointValue } from '@chakra-ui/react';
 import Link from 'next/link';
-import { useQuery } from 'react-query';
-
-interface UserData {
-	name: string;
-	email: string;
-	createdAt: string;
-	id: string | number;
-}
+import { useUsers } from '../../services/hooks/useUsers';
 
 type Props = {};
 
 const UserList = (props: Props) => {
-	const { data, isLoading, error, isFetching } = useQuery(
-		'users',
-		async () => {
-			const response = await fetch('http://localhost:3000/api/users');
-			const data = await response.json();
-			const users = data.users.map((user: UserData) => ({
-				id: user.id,
-				name: user.name,
-				email: user.email,
-				createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-					day: '2-digit',
-					month: 'long',
-					year: 'numeric',
-				}),
-			}));
-			return users;
-		},
-		{
-			staleTime: 1000 * 5, // 5 seconds
-		}
-	);
-
+	const { error, isFetching, isLoading, users } = useUsers();
 	const isWideVersion = useBreakpointValue({
 		base: false,
 		lg: true,
@@ -66,7 +38,7 @@ const UserList = (props: Props) => {
 					<Flex mb='8' justify='space-between' align='center'>
 						<Heading size='lg' fontWeight='normal'>
 							Usuários
-							{isFetching && !isLoading && (
+							{isFetching && !error && !isLoading && (
 								<Spinner size='sm' color='gray.500' ml='3' />
 							)}
 						</Heading>
@@ -109,7 +81,7 @@ const UserList = (props: Props) => {
 									</Tr>
 								</Thead>
 								<Tbody>
-									{data.map((user: UserData) => (
+									{users.map((user) => (
 										<Tr key={user.id}>
 											<Td px={['4', '4', '6']}>
 												<Checkbox colorScheme='pink' />
@@ -152,7 +124,11 @@ const UserList = (props: Props) => {
 									))}
 								</Tbody>
 							</Table>
-							<Pagination />
+							<Pagination
+								totalCountOfRegisters={200}
+								currentPage={5}
+								onPageChange={() => {}}
+							/>
 						</>
 					)}
 				</Box>
