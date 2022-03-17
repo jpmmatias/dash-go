@@ -19,11 +19,13 @@ import { Header, Sidebar, Pagination } from '../../components';
 import { useBreakpointValue } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useUsers } from '../../services/hooks/useUsers';
+import { useState } from 'react';
 
 type Props = {};
 
 const UserList = (props: Props) => {
-	const { error, isFetching, isLoading, users } = useUsers();
+	const [page, setPage] = useState(1);
+	const { error, isFetching, isLoading, data } = useUsers(page);
 	const isWideVersion = useBreakpointValue({
 		base: false,
 		lg: true,
@@ -81,7 +83,7 @@ const UserList = (props: Props) => {
 									</Tr>
 								</Thead>
 								<Tbody>
-									{users.map((user) => (
+									{data.users.map((user) => (
 										<Tr key={user.id}>
 											<Td px={['4', '4', '6']}>
 												<Checkbox colorScheme='pink' />
@@ -125,9 +127,9 @@ const UserList = (props: Props) => {
 								</Tbody>
 							</Table>
 							<Pagination
-								totalCountOfRegisters={200}
-								currentPage={5}
-								onPageChange={() => {}}
+								totalCountOfRegisters={data.totalCount}
+								currentPage={page}
+								onPageChange={setPage}
 							/>
 						</>
 					)}

@@ -8,9 +8,25 @@ interface UserData {
 	id: string | number;
 }
 
-async function getUsers(): Promise<UserData[]> {
-	const response = await api.get('users');
-	const users = response.data.users.map((user: UserData) => ({
+interface getUsersData {
+	users: UserData[];
+	totalCount: number;
+}
+
+interface Data {
+	users: UserData[];
+}
+
+async function getUsers(page: number): Promise<getUsersData> {
+	const { data, headers } = await api.get<Data>('users', {
+		params: {
+			page,
+		},
+	});
+
+	const totalCount = Number(headers['x-total-count']);
+
+	const users = data.users.map((user: UserData) => ({
 		id: user.id,
 		name: user.name,
 		email: user.email,
@@ -20,15 +36,23 @@ async function getUsers(): Promise<UserData[]> {
 			year: 'numeric',
 		}),
 	}));
-	return users;
+
+	return { users, totalCount };
 }
 
-export function useUsers() {
-	const { data, isLoading, error, isFetching } = useQuery('users', getUsers, {
-		staleTime: 1000 * 5, // 5 seconds
-	});
+export function useUsers(page: number) {
+	const { data, isLoading, error, isFetching } = useQuery(
+		['users', page],
+		() => getUsers(page),
+		{
+			staleTime: 1000 * 5, // 5 seconds
+		}
+	);
 
-	const users = data;
-
-	return { users, isLoading, error, isFetching };
+	return {
+		data,
+		isLoading,
+		error,
+		isFetching,
+	};
 }
